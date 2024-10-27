@@ -19,11 +19,13 @@ SPDX-License-Identifier: CC0-1.0
 The primary location is:
 [git.sr.ht/~wombelix/build-helper-scripts](https://git.sr.ht/~wombelix/build-helper-scripts)
 
+<!--
 Mirrors are available on
 [Codeberg](https://codeberg.org/wombelix/build-helper-scripts),
 [Gitlab](https://gitlab.com/wombelix/build-helper-scripts)
 and
 [Github](https://github.com/wombelix/build-helper-scripts).
+-->
 
 ## Contribute
 
