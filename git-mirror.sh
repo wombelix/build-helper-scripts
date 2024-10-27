@@ -21,13 +21,13 @@ GIT_MIRROR_SSH_KNOWN_HOSTS_FILE=~/.ssh/git_mirror_known_hosts
 #
 # shellcheck disable=SC2317  # Don't warn about unreachable commands in this function
 git_mirror () {
-  export GIT_SSH_COMMAND="ssh -i $1 -o UserKnownHostsFile=$GIT_MIRROR_SSH_KNOWN_HOSTS_FILE"
-
-  GIT_BRANCH=$(git symbolic-ref --short HEAD)
-  GIT_SHA=$(git rev-parse --short HEAD)
-  GIT_TAG=$(git tag --points-at="$GIT_SHA")
-
   if [ "$#" -eq "2" ]; then
+    export GIT_SSH_COMMAND="ssh -i $1 -o UserKnownHostsFile=$GIT_MIRROR_SSH_KNOWN_HOSTS_FILE"
+
+    GIT_BRANCH=$(git symbolic-ref --short HEAD)
+    GIT_SHA=$(git rev-parse --short HEAD)
+    GIT_TAG=$(git tag --points-at="$GIT_SHA")
+
     # Cleanup, ensure no 'mirror' remote exists from previous run
     git remote remove mirror || true
 
