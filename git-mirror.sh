@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: MIT
 
+source _global.sh
+
 #
 # Arguments:
 #
@@ -15,16 +17,22 @@
 # - Checked out branch is supposed to be mirrored
 # - Passed SSH key has write permissions in remote repo
 #
+
+# shellcheck disable=SC2317  # Don't warn about unreachable commands in this function
 git_mirror () {
   export GIT_SSH_COMMAND="ssh -i $1 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
+
   GIT_BRANCH=$(git symbolic-ref --short HEAD)
 
   if [ "$#" -eq "2" ]; then
-    git remote add mirror "$2"
-    git push mirror "$GIT_BRANCH"
+    git remote add mirror "$2" \
+      && git push mirror "$GIT_BRANCH" \
+      ; git remote remove mirror
   else
-    echo "Function expects two Arguments:"
-    echo "1: path to ssh key"
-    echo "2: git remote url"
+    echoerr "Function expects two Arguments!\n" \
+    	"1: path to ssh key\n"
+    	"2: git remote url"
   fi
 }
+
+source _post.sh
