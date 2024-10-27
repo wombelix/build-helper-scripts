@@ -21,8 +21,6 @@ GIT_MIRROR_SSH_KNOWN_HOSTS_FILE=~/.ssh/git_mirror_known_hosts
 #
 # shellcheck disable=SC2317  # Don't warn about unreachable commands in this function
 git_mirror () {
-  git_mirror_set_ssh_known_hosts
-
   export GIT_SSH_COMMAND="ssh -i $1 -o UserKnownHostsFile=$GIT_MIRROR_SSH_KNOWN_HOSTS_FILE"
 
   GIT_BRANCH=$(git symbolic-ref --short HEAD)
