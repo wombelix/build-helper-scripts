@@ -24,11 +24,20 @@ git_mirror () {
   export GIT_SSH_COMMAND="ssh -i $1 -o UserKnownHostsFile=$GIT_MIRROR_SSH_KNOWN_HOSTS_FILE"
 
   GIT_BRANCH=$(git symbolic-ref --short HEAD)
+  GIT_SHA=$(git rev-parse --short HEAD)
+  GIT_TAG=$(git tag --points-at="$GIT_SHA")
 
   if [ "$#" -eq "2" ]; then
+    # Cleanup, ensure no 'mirror' remote exists from previous run
+    git remote remove mirror || true
+
     git remote add mirror "$2" \
-      && git push mirror "$GIT_BRANCH" \
-      ; git remote remove mirror
+      && git push mirror "$GIT_BRANCH"
+
+    # If the commit is tagged, push it to the mirror
+    if [ -n "${GIT_TAG}" ]; then
+      git push mirror tag "$GIT_TAG"
+    fi
   else
     echoerr "Function expects two Arguments!\n" \
     	"1: path to ssh key\n"
