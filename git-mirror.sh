@@ -24,7 +24,7 @@ git_mirror () {
   if [ "$#" -eq "2" ]; then
     export GIT_SSH_COMMAND="ssh -i $1 -o UserKnownHostsFile=$GIT_MIRROR_SSH_KNOWN_HOSTS_FILE"
 
-    GIT_BRANCH=$(git symbolic-ref --short HEAD)
+    GIT_BRANCH=$(git branch --show-current)
     GIT_SHA=$(git rev-parse --short HEAD)
     GIT_TAG=$(git tag --points-at="$GIT_SHA")
 
