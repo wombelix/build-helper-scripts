@@ -35,4 +35,4 @@ git_mirror () {
   fi
 }
 
-source _post.sh
+exit "$RC"
