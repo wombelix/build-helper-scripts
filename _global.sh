@@ -4,11 +4,9 @@
 #
 # SPDX-License-Identifier: MIT
 
-export RC=0
-
 echoerr() {
     echo "[ERROR] $*" 1>&2;
-    RC=1
+    exit 1
 }
 
 echoinfo() {

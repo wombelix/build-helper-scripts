@@ -34,5 +34,3 @@ git_mirror () {
     	"2: git remote url"
   fi
 }
-
-exit "$RC"
