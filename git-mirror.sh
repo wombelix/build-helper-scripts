@@ -39,8 +39,6 @@ git_mirror () {
 }
 
 git_mirror_set_ssh_known_hosts () {
-  SSHKHF=~/.ssh/git_mirror_known_hosts
-  mv "$SSHKHF" "$SSHKHF".git_mirror_backup
   printf '%s' "$GIT_MIRROR_SSH_KNOWN_HOSTS" > "$GIT_MIRROR_SSH_KNOWN_HOSTS_FILE"
 }
 
