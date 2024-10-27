@@ -42,6 +42,9 @@ git_mirror_set_ssh_known_hosts () {
   printf '%s' "$GIT_MIRROR_SSH_KNOWN_HOSTS" > "$GIT_MIRROR_SSH_KNOWN_HOSTS_FILE"
 }
 
+# The way 'read' is used will cause a return code of 1
+# Ensure that this expected behavior doesn't stop script execution
+set +e
 IFS='' read -r -d '' GIT_MIRROR_SSH_KNOWN_HOSTS <<"EOF"
 # SPDX-FileCopyrightText: 2024 Dominik Wombacher <dominik@wombacher.cc>
 #
@@ -83,7 +86,7 @@ codeberg.org ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIVIC02vnjFyL+I4RHfvIGNtOgJMe76
 codeberg.org ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBL2pDxWr18SoiDJCGZ5LmxPygTlPu+cCKSkpqkvCyQzl5xmIMeKNdfdBpfbCGDPoZQghePzFZkKJNR/v9Win3Sc=
 codeberg.org ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC8hZi7K1/2E2uBX8gwPRJAHvRAob+3Sn+y2hxiEhN0buv1igjYFTgFO2qQD8vLfU/HT/P/rqvEeTvaDfY1y/vcvQ8+YuUYyTwE2UaVU5aJv89y6PEZBYycaJCPdGIfZlLMmjilh/Sk8IWSEK6dQr+g686lu5cSWrFW60ixWpHpEVB26eRWin3lKYWSQGMwwKv4LwmW3ouqqs4Z4vsqRFqXJ/eCi3yhpT+nOjljXvZKiYTpYajqUC48IHAxTWugrKe1vXWOPxVXXMQEPsaIRc2hpK+v1LmfB7GnEGvF1UAKnEZbUuiD9PBEeD5a1MZQIzcoPWCrTxipEpuXQ5Tni4mN
 EOF
-
+set -e
 
 # Configure SSH known hosts file once on sourcing
 git_mirror_set_ssh_known_hosts
