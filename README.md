@@ -6,7 +6,8 @@ SPDX-License-Identifier: CC0-1.0
 
 # build helper scripts
 
-[![REUSE status](https://api.reuse.software/badge/git.sr.ht/~wombelix/build-helper-scripts)](https://api.reuse.software/info/git.sr.ht/~wombelix/build-helper-scripts)
+[![REUSE status](https://api.reuse.software/badge/git.sr.ht/~wombelix/build-helper-scripts)](https://api.reuse.software/info/git.sr.ht/~wombelix/build-helper-scripts) 
+[![builds.sr.ht status](https://builds.sr.ht/~wombelix/build-helper-scripts.svg)](https://builds.sr.ht/~wombelix/build-helper-scripts?)
 
 ## Table of Contents
 
