@@ -35,10 +35,8 @@ git_mirror () {
     git remote add mirror "$2" \
       && git push mirror "$GIT_BRANCH"
 
-    # If the commit is tagged, push it to the mirror
-    if [ -n "${GIT_TAG}" ]; then
-      git push mirror tag "$GIT_TAG"
-    fi
+    # Ensure all existing tags are pushed as well
+    git push mirror --tags
   else
     echoerr "Function expects two Arguments!\n" \
     	"1: path to ssh key\n"
