@@ -12,3 +12,6 @@ echoerr() {
 echoinfo() {
     echo "[INFO] $*"
 }
+
+# ensure $HOME/.ssh exists
+mkdir -p "$HOME"/.ssh && chmod 600 "$HOME"/.ssh
