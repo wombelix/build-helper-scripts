@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# SPDX-FileCopyrightText: 2024 Dominik Wombacher
+# SPDX-FileCopyrightText: 2025 Dominik Wombacher
 #
 # SPDX-License-Identifier: MIT
 
