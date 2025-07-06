@@ -14,4 +14,4 @@ echoinfo() {
 }
 
 # ensure $HOME/.ssh exists
-mkdir -p "$HOME"/.ssh && chmod 600 "$HOME"/.ssh
+mkdir -p "$HOME"/.ssh && chmod 700 "$HOME"/.ssh
