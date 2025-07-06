@@ -13,9 +13,14 @@ echoinfo() {
     echo "[INFO] $*"
 }
 
+# ensure $HOME/.ssh exists
+mkdir -p "$HOME"/.ssh && chmod 700 "$HOME"/.ssh
+
+export SSH_GIT_KNOWN_HOSTS_FILE=~/.ssh/git_known_hosts
+
 set_ssh_git_known_hosts () {
-  cat > "$SSH_GIT_KNOWN_HOSTS_FILE" <<"EOF"
-# SPDX-FileCopyrightText: 2024 Dominik Wombacher <dominik@wombacher.cc>
+  cat > "$SSH_KNOWN_HOSTS_FILE" <<"EOF"
+# SPDX-FileCopyrightText: 2025 Dominik Wombacher <dominik@wombacher.cc>
 #
 # SPDX-License-Identifier: CC0-1.0
 
@@ -68,8 +73,3 @@ git.sr.ht ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAA
 git.sr.ht ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMZvRd4EtM7R+IHVMWmDkVU3VLQTSwQDSAvW0t2Tkj60
 EOF
 }
-
-# ensure $HOME/.ssh exists
-mkdir -p "$HOME"/.ssh && chmod 700 "$HOME"/.ssh
-
-SSH_GIT_KNOWN_HOSTS_FILE=~/.ssh/git_known_hosts
