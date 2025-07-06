@@ -19,7 +19,7 @@ mkdir -p "$HOME"/.ssh && chmod 700 "$HOME"/.ssh
 export SSH_GIT_KNOWN_HOSTS_FILE=~/.ssh/git_known_hosts
 
 set_ssh_git_known_hosts () {
-  cat > "$SSH_KNOWN_HOSTS_FILE" <<"EOF"
+  cat > "$SSH_GIT_KNOWN_HOSTS_FILE" <<"EOF"
 # SPDX-FileCopyrightText: 2025 Dominik Wombacher <dominik@wombacher.cc>
 #
 # SPDX-License-Identifier: CC0-1.0
