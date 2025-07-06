@@ -13,9 +13,9 @@ set_ssh_git_known_hosts
 # Arguments:
 #
 # - $1 = path to ssh key
-# - $2 = git remote url
-# - $3 = branch name (optional, defaults to current branch)
-# - $4 = push options (optional, e.g., "-o skip-ci")
+# - $2 = remote url (optional)
+# - $3 = push options (optional, e.g., "-o skip-ci")
+# - $4 = "--tags" to also push tags (optional)
 #
 # Requirements:
 # - Caller scripts workdir is a git repository
@@ -23,29 +23,32 @@ set_ssh_git_known_hosts
 #
 # shellcheck disable=SC2317  # Don't warn about unreachable commands in this function
 git_push_ssh () {
-  if [ "$#" -lt "2" ]; then
-    echoerr "Function expects at least two Arguments!\n" \
-      "1: path to ssh key\n" \
-      "2: git remote url\n" \
-      "3: branch name (optional)\n" \
-      "4: push options (optional)"
-    return 1
-  fi
-
   local ssh_key="$1"
   local remote_url="$2"
-  local branch="${3:-$(git branch --show-current)}"
-  local push_opts="$4"
+  local push_opts="$3"
+  local push_tags="$4"
+  local original_url
 
   export GIT_SSH_COMMAND="ssh -i $ssh_key -o UserKnownHostsFile=$SSH_GIT_KNOWN_HOSTS_FILE"
 
-  # Setup remote
-  git remote remove origin 2>/dev/null || true
-  git remote add origin "$remote_url"
+  # Handle remote URL
+  if [ -n "$remote_url" ]; then
+    original_url=$(git remote get-url origin 2>/dev/null || echo "")
+    git remote set-url origin "$remote_url"
+  fi
 
-  # Push branch and tags
+  # Push current branch
   # shellcheck disable=SC2086  # push_opts needs word splitting
-  git push $push_opts origin "$branch"
-  # shellcheck disable=SC2086  # push_opts needs word splitting
-  git push $push_opts origin --tags
+  git push $push_opts origin HEAD
+
+  # Push tags if requested
+  if [ "$push_tags" = "--tags" ]; then
+    # shellcheck disable=SC2086  # push_opts needs word splitting
+    git push $push_opts origin --tags
+  fi
+
+  # Revert remote URL if it was changed
+  if [ -n "$remote_url" ] && [ -n "$original_url" ]; then
+    git remote set-url origin "$original_url"
+  fi
 }
