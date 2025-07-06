@@ -29,4 +29,3 @@ triggers:
   - action: email
     condition: failure
     to: dominik@wombacher.cc
-
