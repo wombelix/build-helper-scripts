@@ -27,7 +27,6 @@ git_mirror () {
     GIT_SHA=$(git rev-parse --short HEAD)
     # Looks hacky but was the most reliable approach so far...
     GIT_BRANCH=$(git branch --points-at="$GIT_SHA" | tail -n1 | tr -d '* ')
-    GIT_TAG=$(git tag --points-at="$GIT_SHA")
 
     # Cleanup, ensure no 'mirror' remote exists from previous run
     git remote remove mirror || true
