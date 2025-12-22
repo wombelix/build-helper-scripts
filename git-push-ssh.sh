@@ -37,9 +37,13 @@ git_push_ssh () {
     git remote set-url origin "$remote_url"
   fi
 
+  GIT_SHA=$(git rev-parse --short HEAD)
+  # Looks hacky but was the most reliable approach so far...
+  GIT_BRANCH=$(git branch --points-at="$GIT_SHA" | tail -n1 | tr -d '* ')
+
   # Push current branch
   # shellcheck disable=SC2086  # push_opts needs word splitting
-  git push $push_opts origin HEAD
+  git push $push_opts origin "$GIT_BRANCH"
 
   # Push tags if requested
   if [ "$push_tags" = "--tags" ]; then
