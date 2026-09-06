@@ -65,18 +65,18 @@ jobs:
       - name: Install params2env
         uses: wombelix/params2env@main
 
-      - name: Setup SSH deploy key
+      - name: Fetch SSH deploy key from SSM
         run: |
-          mkdir -p ~/.ssh && chmod 700 ~/.ssh
           params2env read \
             --path "${{ inputs.mirror_key_ssm_path }}" \
             --env GIT_DEPLOY_KEY \
-            --file ~/.ssh/git_deploy_key.env
-          source ~/.ssh/git_deploy_key.env
+            --format github-env
+
+      - name: Setup SSH deploy key
+        run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
           echo "$GIT_DEPLOY_KEY" > ~/.ssh/git_deploy_key
           chmod 600 ~/.ssh/git_deploy_key
-          rm ~/.ssh/git_deploy_key.env
-          unset GIT_DEPLOY_KEY
 
       - name: Mirror to platforms
         run: |
