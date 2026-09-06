@@ -1,0 +1,100 @@
+# SPDX-FileCopyrightText: 2026 Dominik Wombacher <dominik@wombacher.cc>
+#
+# SPDX-License-Identifier: MIT
+
+name: Git Mirror
+
+on:
+  workflow_call:
+    inputs:
+      mirror_gitlab:
+        description: "Mirror to GitLab"
+        type: boolean
+        default: true
+      mirror_codeberg:
+        description: "Mirror to Codeberg"
+        type: boolean
+        default: true
+      mirror_sourcehut:
+        description: "Mirror to Sourcehut"
+        type: boolean
+        default: true
+      username:
+        description: "Username on git forges"
+        type: string
+        default: "wombelix"
+      aws_region:
+        description: "AWS region"
+        type: string
+        default: "eu-central-1"
+      aws_account_id:
+        description: "AWS account ID"
+        type: string
+        default: "992382418145"
+      mirror_key_ssm_path:
+        description: "SSM path to SSH deploy key"
+        type: string
+        default: "/projects/_git-deploy-key/ssh-private-key-openssh"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Checkout build-helper-scripts
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.username }}/build-helper-scripts
+          path: .build-helper-scripts
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ inputs.aws_account_id }}:role/GitHubOIDC-${{ github.event.repository.name }}-ResourceAccess
+          aws-region: ${{ inputs.aws_region }}
+
+      - name: Install params2env
+        uses: wombelix/params2env@main
+
+      - name: Setup SSH deploy key
+        run: |
+          params2env read \
+            --path "${{ inputs.mirror_key_ssm_path }}" \
+            --env GIT_DEPLOY_KEY \
+            --file ~/.ssh/git_deploy_key.env
+          source ~/.ssh/git_deploy_key.env
+          echo "$GIT_DEPLOY_KEY" > ~/.ssh/git_deploy_key
+          chmod 600 ~/.ssh/git_deploy_key
+          rm ~/.ssh/git_deploy_key.env
+          unset GIT_DEPLOY_KEY
+
+      - name: Mirror to platforms
+        run: |
+          cd .build-helper-scripts
+          source git-mirror.sh
+          cd "$GITHUB_WORKSPACE"
+
+          if [ "${{ inputs.mirror_gitlab }}" = "true" ]; then
+            git_mirror ~/.ssh/git_deploy_key "git@gitlab.com:${{ inputs.username }}/${{ github.event.repository.name }}.git"
+          fi
+
+          if [ "${{ inputs.mirror_codeberg }}" = "true" ]; then
+            git_mirror ~/.ssh/git_deploy_key "git@codeberg.org:${{ inputs.username }}/${{ github.event.repository.name }}.git"
+          fi
+
+          if [ "${{ inputs.mirror_sourcehut }}" = "true" ]; then
+            git_mirror ~/.ssh/git_deploy_key "git@git.sr.ht:~${{ inputs.username }}/${{ github.event.repository.name }}.git"
+          fi
+
+      - name: Cleanup
+        if: always()
+        run: rm -f ~/.ssh/git_deploy_key
