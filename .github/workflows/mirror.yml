@@ -67,6 +67,7 @@ jobs:
 
       - name: Setup SSH deploy key
         run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
           params2env read \
             --path "${{ inputs.mirror_key_ssm_path }}" \
             --env GIT_DEPLOY_KEY \
