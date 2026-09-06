@@ -93,7 +93,7 @@ jobs:
           fi
 
           if [ "${{ inputs.mirror_sourcehut }}" = "true" ]; then
-            git_mirror ~/.ssh/git_deploy_key "git@git.sr.ht:~${{ inputs.username }}/${{ github.event.repository.name }}.git"
+            git_mirror ~/.ssh/git_deploy_key "git@git.sr.ht:~${{ inputs.username }}/${{ github.event.repository.name }}"
           fi
 
       - name: Cleanup
