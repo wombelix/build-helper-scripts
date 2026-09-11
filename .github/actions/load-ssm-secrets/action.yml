@@ -1,0 +1,43 @@
+# SPDX-FileCopyrightText: 2026 Dominik Wombacher <dominik@wombacher.cc>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+name: 'Load SSM secrets'
+description: >-
+  Assumes the calling repository's GitHub OIDC IAM role and loads the SSM
+  Parameter Store values declared in the repository's .params2env.yaml into
+  $GITHUB_ENV via params2env. Secret values are masked in logs.
+
+inputs:
+  aws_region:
+    description: 'AWS region'
+    required: false
+    default: 'eu-central-1'
+  aws_account_id:
+    description: 'AWS account ID'
+    required: false
+    default: '992382418145'
+  role_name:
+    description: >-
+      IAM role name to assume. Defaults to
+      GitHubOIDC-<repository-name>-ResourceAccess.
+    required: false
+    default: ''
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: >-
+          arn:aws:iam::${{ inputs.aws_account_id }}:role/${{
+          inputs.role_name || format('GitHubOIDC-{0}-ResourceAccess', github.event.repository.name) }}
+        aws-region: ${{ inputs.aws_region }}
+
+    - name: Install params2env
+      uses: wombelix/params2env@main
+
+    - name: Load secrets from SSM
+      shell: bash
+      run: params2env read
