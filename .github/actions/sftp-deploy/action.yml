@@ -1,0 +1,66 @@
+# SPDX-FileCopyrightText: 2026 Dominik Wombacher <dominik@wombacher.cc>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+name: 'SFTP deploy'
+description: >-
+  Mirrors a local directory to an SFTP target via lftp. Expects SFTP_SERVER,
+  SFTP_USER and SFTP_PASSWORD to already be set as environment variables,
+  e.g. by the load-ssm-secrets action.
+
+inputs:
+  source:
+    description: 'Local directory to mirror to the SFTP target'
+    required: true
+  exclude:
+    description: >-
+      Comma-separated list of lftp --exclude patterns to skip during the
+      mirror (relative to source)
+    required: false
+    default: ''
+  delete_excluded:
+    description: 'Also delete excluded paths on the remote (--delete-excluded)'
+    required: false
+    default: 'false'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install lftp
+      shell: bash
+      run: |
+        if ! command -v lftp >/dev/null 2>&1; then
+          sudo apt-get update
+          sudo apt-get install -y lftp
+        fi
+
+    - name: Deploy to SFTP target
+      shell: bash
+      env:
+        DEPLOY_SOURCE: ${{ inputs.source }}
+        DEPLOY_EXCLUDE: ${{ inputs.exclude }}
+        DEPLOY_DELETE_EXCLUDED: ${{ inputs.delete_excluded }}
+      run: |
+        export LFTP_PASSWORD="$SFTP_PASSWORD"
+        # SFTP_PASSWORD is already masked by params2env (github-env format),
+        # but that mask is registered for that exact string value. Re-assert
+        # it explicitly under the copy so masking never depends on the two
+        # variables happening to hold identical bytes.
+        echo "::add-mask::$LFTP_PASSWORD"
+
+        cmd="set sftp:auto-confirm yes; mirror"
+
+        if [ -n "$DEPLOY_EXCLUDE" ]; then
+          IFS=',' read -ra items <<< "$DEPLOY_EXCLUDE"
+          for item in "${items[@]}"; do
+            cmd="$cmd --exclude $item"
+          done
+        fi
+
+        if [ "$DEPLOY_DELETE_EXCLUDED" = "true" ]; then
+          cmd="$cmd --delete-excluded"
+        fi
+
+        cmd="$cmd --delete --ignore-time -v -R $DEPLOY_SOURCE . ; exit"
+
+        lftp --env-password "sftp://${SFTP_USER}@${SFTP_SERVER}" -e "$cmd"
