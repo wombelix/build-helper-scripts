@@ -8,7 +8,7 @@ SPDX-License-Identifier: CC0-1.0
 
 <!-- markdownlint-disable MD013 -->
 [![REUSE status](https://api.reuse.software/badge/github.com/wombelix/build-helper-scripts)](https://api.reuse.software/info/github.com/wombelix/build-helper-scripts)
-[![Mirror](https://github.com/wombelix/build-helper-scripts/actions/workflows/mirror.yml/badge.svg)](https://github.com/wombelix/build-helper-scripts/actions/workflows/mirror.yml)
+[![Mirror](https://github.com/wombelix/build-helper-scripts/actions/workflows/mirror-self.yml/badge.svg)](https://github.com/wombelix/build-helper-scripts/actions/workflows/mirror-self.yml)
 <!-- markdownlint-enable MD013 -->
 
 ## Table of Contents
