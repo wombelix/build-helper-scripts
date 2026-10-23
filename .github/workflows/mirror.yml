@@ -45,19 +45,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           fetch-tags: true
 
       - name: Checkout build-helper-scripts
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: ${{ inputs.username }}/build-helper-scripts
           path: .build-helper-scripts
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: arn:aws:iam::${{ inputs.aws_account_id }}:role/GitHubOIDC-${{ github.event.repository.name }}-ResourceAccess
           aws-region: ${{ inputs.aws_region }}
