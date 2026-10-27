@@ -1,0 +1,24 @@
+# SPDX-FileCopyrightText: 2026 Dominik Wombacher <dominik@wombacher.cc>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+name: 'pre-commit on changed files'
+description: >-
+  Installs pre-commit and runs it on the files a pull request changes.
+  Use in a pull_request workflow, after actions/checkout with
+  fetch-depth: 0.
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install pre-commit
+      shell: bash
+      run: pipx install pre-commit
+
+    # pre-commit diffs from the merge base, so changes on the base branch are ignored
+    - name: Run pre-commit on changed files
+      shell: bash
+      env:
+        BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+      run: pre-commit run --show-diff-on-failure --color always --from-ref "$BASE_SHA" --to-ref "$HEAD_SHA"
