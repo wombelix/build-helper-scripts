@@ -84,17 +84,21 @@ jobs:
           source git-mirror.sh
           cd "$GITHUB_WORKSPACE"
 
+          remotes=()
+
           if [ "${{ inputs.mirror_gitlab }}" = "true" ]; then
-            git_mirror ~/.ssh/git_deploy_key "git@gitlab.com:${{ inputs.username }}/${{ github.event.repository.name }}.git"
+            remotes+=("git@gitlab.com:${{ inputs.username }}/${{ github.event.repository.name }}.git")
           fi
 
           if [ "${{ inputs.mirror_codeberg }}" = "true" ]; then
-            git_mirror ~/.ssh/git_deploy_key "git@codeberg.org:${{ inputs.username }}/${{ github.event.repository.name }}.git"
+            remotes+=("git@codeberg.org:${{ inputs.username }}/${{ github.event.repository.name }}.git")
           fi
 
           if [ "${{ inputs.mirror_sourcehut }}" = "true" ]; then
-            git_mirror ~/.ssh/git_deploy_key "git@git.sr.ht:~${{ inputs.username }}/${{ github.event.repository.name }}"
+            remotes+=("git@git.sr.ht:~${{ inputs.username }}/${{ github.event.repository.name }}")
           fi
+
+          git_mirror_many ~/.ssh/git_deploy_key "${remotes[@]}"
 
       - name: Cleanup
         if: always()
